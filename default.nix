@@ -17,7 +17,14 @@ let
   rockchip = bareboxImage: pkgs.callPackage ./images/rockchip.nix {
     inherit genImage bareboxImage; rootFS = aarch64Image;
   };
-  armv8 = aarch64Pkgs.bareboxARMv8;
+  imx8m = bareboxImage: pkgs.callPackage ./images/imx8m.nix {
+    inherit genImage bareboxImage; rootFS = aarch64Image;
+  };
+  };
+
+  # Bootloaders
+  bb-armv7    = aarch64Pkgs.bareboxARMv7;
+  bb-armv8    = aarch64Pkgs.bareboxARMv8;
 in {
   rock3a          = rockchip "${bb-armv8}/barebox-rock3a.img";
 
