@@ -12,10 +12,17 @@ let
 
   # rootFS
   aarch64Image = pkgs.callPackage ./pkgs/aarch64-image {};
-  rockchip = uboot: pkgs.callPackage ./images/rockchip.nix {
-    inherit uboot;
-    inherit aarch64Image buildImage;
+
+  # Image configs
+  rockchip = bareboxImage: pkgs.callPackage ./images/rockchip.nix {
+    inherit genImage bareboxImage; rootFS = aarch64Image;
   };
+  armv8 = aarch64Pkgs.bareboxARMv8;
 in {
+  rock3a          = rockchip "${bb-armv8}/barebox-rock3a.img";
+
+  imx8mn-evk      = imx8m    "${bb-armv8}/barebox-nxp-imx8mn-evk.img";
+  imx8mm-evk      = imx8m    "${bb-armv8}/barebox-nxp-imx8mm-evk.img";
+  imx8mp-evk      = imx8m    "${bb-armv8}/barebox-nxp-imx8mp-evk.img";
 
 }
