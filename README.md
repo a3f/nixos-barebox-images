@@ -1,15 +1,14 @@
-# NixOS aarch64 images
+# NixOS aarch64 images with barebox
 
 Build aarch64 images for ARM single board computer that require
-custom uboot firmware.
+custom barebox firmware.
 It re-uses pre-build NixOS installation images,
 so it can be also built on non aarch64 architectures.
 
 ## Example
 
 ```console
-$ nix-build -A rock64 # for regular Rock64
-$ nix-build -A rockPro64 # for RockPro64
+$ nix-build -A rock3a
 $ sfdisk --dump result
 label: gpt
 label-id: 0493C426-ACD9-9843-9C4B-268C90698145
@@ -32,23 +31,36 @@ $ sudo dd if=./result of=/dev/mmcblk0 iflag=direct oflag=direct bs=16M status=pr
 
 Replace `/dev/mmcblk0` with your actual device.
 
+For i.MX8M, you need to accept the EULA:
+```console
+firmware-imx.accept_license = true
+```
+
+
+
+Building against a forked nixpkgs is also possible:
+
+```console
+NIX_PATH=/src nix-build -A rock3a
+```
+
 ## Flakes support
 
 Flakes support is also provided. This repository has no dependencies except for nixpkgs, however we do not provide a
 lock file which means that one will be created using your system if you pull down the repo. This lets you use an
 up-to-date uboot at whatever level of stability you are already comfortable with.
 
-To build the `rockPro64` image without pulling down the repo, use:
+To build the `rock3a` image without pulling down the repo, use:
 ```
-nix build --no-write-lock-file 'github:Mic92/nixos-aarch64-images#rockPro64'
-```
-
-To build the `rockPro64` image without pulling down the repo and switching nixpkgs with nixpkgs-unstable:
-```
-nix build --no-write-lock-file --override-input nixpkgs github:nixos/nixpkgs/nixpkgs-unstable 'github:Mic92/nixos-aarch64-images#rockPro64'
+nix build --no-write-lock-file 'github:Mic92/nixos-aarch64-images#rock3a'
 ```
 
-Of course, you can replace `rockPro64` with any of the outputs included in this flake. To see the outputs, you can
+To build the `rock3a` image without pulling down the repo and switching nixpkgs with nixpkgs-unstable:
+```
+nix build --no-write-lock-file --override-input nixpkgs github:nixos/nixpkgs/nixpkgs-unstable 'github:Mic92/nixos-aarch64-images#rock3a'
+```
+
+Of course, you can replace `rock3a` with any of the outputs included in this flake. To see the outputs, you can
 invoke `nix flake show`:
 
 ```
@@ -56,7 +68,7 @@ invoke `nix flake show`:
 git+file:///home/user/git/nixos-aarch64-images
 └───packages
     └───x86_64-linux
-        ├───aarch64Image: package 'aarch64-image'
+        ├───rootFS: package 'aarch64-image'
         ├───pinebookPro: package 'image'
         ├───roc-pc-rk3399: package 'image'
         ├───rock64: package 'image'
